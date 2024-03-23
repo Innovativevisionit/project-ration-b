@@ -9,4 +9,5 @@ public interface ProductService {
     List<Product> list();
     List<Product> activeList();
     Product edit(int id);
+    Product update(Product data);
 }

@@ -15,7 +15,6 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductRepository productRepository;
     public Product add(Product data){
-
         if(productRepository.existsByName(data.getName())){
             throw new AlreadyExistsException("Name already exists");
         }
@@ -31,6 +30,13 @@ public class ProductServiceImpl implements ProductService {
     }
     public Product edit(int id){
         return productRepository.findById(id).orElseThrow(()->new NotFoundException(id + "is not found"));
+    }
+    public Product update(Product data){
+        Product product= productRepository.findById(data.getId())
+                .orElseThrow(()->new NotFoundException(data.getId() + "is not found"));
+        product.setName(data.getName());
+        productRepository.save(product);
+        return product;
     }
 
 }
