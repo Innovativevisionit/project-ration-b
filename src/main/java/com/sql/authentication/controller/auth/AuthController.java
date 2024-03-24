@@ -27,6 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
@@ -118,4 +121,11 @@ public class AuthController {
                 .body(new ApiResponse(true,"You've been signed out!"));
     }
 
+    @GetMapping("/list")
+    public List<User> getUserList() {
+        
+        List<User> user = userRepository.findAll();
+        return user;
+    }
+    
 }
