@@ -27,6 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/auth")
@@ -76,7 +79,6 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
         try {
-            System.out.println(signUpRequest);
             if (userRepository.existsByUsername(signUpRequest.getUsername())) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponse(false, "Username is already taken!"));
             }
@@ -102,7 +104,6 @@ public class AuthController {
             }
 
             user.setRoles(roles);
-            System.out.println(user);
             userRepository.save(user);
 
             return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(true, "User registered successfully!", user));
@@ -120,4 +121,11 @@ public class AuthController {
                 .body(new ApiResponse(true,"You've been signed out!"));
     }
 
+    @GetMapping("/list")
+    public List<User> getUserList() {
+        
+        List<User> user = userRepository.findAll();
+        return user;
+    }
+    
 }

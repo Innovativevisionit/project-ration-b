@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
-
 @Entity
 @Data
 public class Product {
@@ -15,5 +14,8 @@ public class Product {
     @Column(name="name")
     @NotBlank(message = "Name is Required")
     private String name;
+    private String description;
+    private String price;
+    private String quantity;
     private int status=1;
 }
