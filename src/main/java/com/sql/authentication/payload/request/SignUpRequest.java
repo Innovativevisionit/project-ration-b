@@ -15,9 +15,10 @@ public class SignUpRequest {
     @NotBlank
     @Email
     private String email;
-
     private Set<String> role;
-
     @NotBlank
     private String password;
+    private String location;
+    private String smartId;
+
 }
