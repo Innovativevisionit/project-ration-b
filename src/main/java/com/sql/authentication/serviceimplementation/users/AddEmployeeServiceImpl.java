@@ -20,8 +20,8 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-@Service
 
+@Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
     @Autowired
     private UserRepository userRepository;
@@ -33,7 +33,6 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     private LocationRepository locationRepository;
 
     public User addUser(SignUpRequest signUpRequest){
-        System.out.println(signUpRequest);
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
            throw new AlreadyExistsException("Username is already taken!");
         }
@@ -62,7 +61,9 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
 
         user.setRoles(roles);
         user.setLocation(location);
-        System.out.println(user);
+        user.setSmartId(signUpRequest.getSmartId());
+        user.setAge(signUpRequest.getAge());
+        user.setFamilyMembersCount(signUpRequest.getFamilyMembersCount());
         userRepository.save(user);
         return user;
     }

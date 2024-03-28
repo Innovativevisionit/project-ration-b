@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 @RestController
 @RequestMapping("api/location")
@@ -34,14 +36,14 @@ public class LocationController {
         }
     }
     @GetMapping("/list")
-    public ResponseEntity<?> get(){
+    public List<Location> get(){
         try {
             List<Location> Locations=locationService.list();
             Response<List<Location>> response=new Response<>(HttpStatus.OK.value(),"Success",Locations);
-            return ResponseEntity.ok().body(response);
+            return Locations;
         }catch (Exception e){
-            ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
-            return ResponseEntity.internalServerError().body(response);
+            e.printStackTrace();
+            return Collections.emptyList();
         }
 
     }
