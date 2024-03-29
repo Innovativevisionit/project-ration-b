@@ -6,6 +6,7 @@ import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignUpRequest;
 import com.sql.authentication.payload.response.ApiResponse;
+import com.sql.authentication.payload.response.EmpListRes;
 import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.repository.LocationRepository;
 import com.sql.authentication.repository.RoleRepository;
@@ -72,21 +73,17 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         return user;
     }
 
-    public List<User> employeeList(){
+    public List<EmpListRes> employeeList(){
         Role adminRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
          
         List<User> userList = userRepository.findByRoles(adminRole);
 
-        List<User> userResult = new ArrayList<>();
-
-        for (User users : userList) {
-            User user = new User();
-            user.setUsername(users.getUsername());
-            user.setEmail(users.getEmail());
-            userResult.add(user);
-        }
-        return userResult;
+        return userList
+                .stream()
+               .map(list->{
+                    return modelMapper.map(list, EmpListRes.class);
+                }).toList();
     }
     public List<UserListRes> userList(){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
