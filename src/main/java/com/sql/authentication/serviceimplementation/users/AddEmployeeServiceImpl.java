@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -67,9 +68,22 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         userRepository.save(user);
         return user;
     }
+
     public List<User> employeeList(){
         Role adminRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
-        return userRepository.findByRoles(adminRole);
+         
+        List<User> userList = userRepository.findByRoles(adminRole);
+
+        List<User> userResult = new ArrayList<>();
+
+        for (User users : userList) {
+            User user = new User();
+            user.setUsername(users.getUsername());
+            user.setEmail(users.getEmail());
+            userResult.add(user);
+        }
+        return userResult;
     }
+
 }
