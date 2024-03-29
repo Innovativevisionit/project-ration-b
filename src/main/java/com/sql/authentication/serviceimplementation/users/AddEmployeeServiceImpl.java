@@ -6,11 +6,13 @@ import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignUpRequest;
 import com.sql.authentication.payload.response.ApiResponse;
+import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.repository.LocationRepository;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.service.users.AddEmployeeService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,8 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     private LocationRepository locationRepository;
     @Autowired
     private AuditorAware<String> auditorAware;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public User addUser(SignUpRequest signUpRequest){
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -84,7 +88,7 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         }
         return userResult;
     }
-    public List<User> userList(){
+    public List<UserListRes> userList(){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
         Role userRole = roleRepository.findByName("User")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
@@ -95,7 +99,9 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         System.out.println(location);
         return userRepository.findByRolesAndLocation(userRole,location)
                 .stream()
-                .filter(data->!data.getUsername().equalsIgnoreCase(userList.getUsername())).toList();
+                .filter(data->!data.getUsername().equalsIgnoreCase(userList.getUsername())).map(list->{
+                    return modelMapper.map(list,UserListRes.class);
+                }).toList();
 
     }
 }
