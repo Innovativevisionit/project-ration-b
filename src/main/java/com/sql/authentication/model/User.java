@@ -43,6 +43,9 @@ public class User {
     @JoinColumn(name = "location_id")
     private  Location location;
     private String smartId;
+    private String age;
+    private String familyMembersCount;
+    
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
