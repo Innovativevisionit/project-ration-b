@@ -52,11 +52,20 @@ public class AddEmployeeController {
         }
 
     }
-    @GetMapping("/userList")
-    public ResponseEntity<?> userList(){
+    @GetMapping("/employeeList")
+    public ResponseEntity<?> employeeList(){
         try {
            List<User> list= addEmployeeService.employeeList();
            return ResponseEntity.ok(list);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @GetMapping("/userList")
+    public ResponseEntity<?> userList(){
+        try {
+            List<User> list= addEmployeeService.userList();
+            return ResponseEntity.ok(list);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }

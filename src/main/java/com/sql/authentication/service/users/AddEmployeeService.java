@@ -8,5 +8,6 @@ import java.util.List;
 public interface AddEmployeeService {
     User addUser(SignUpRequest signUpRequest);
     List<User> employeeList();
+    List<User> userList();
 
 }

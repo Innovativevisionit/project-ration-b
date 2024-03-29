@@ -12,14 +12,13 @@ import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.service.users.AddEmployeeService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
@@ -31,6 +30,8 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     private RoleRepository roleRepository;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private AuditorAware<String> auditorAware;
 
     public User addUser(SignUpRequest signUpRequest){
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -71,5 +72,19 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         Role adminRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
         return userRepository.findByRoles(adminRole);
+    }
+    public List<User> userList(){
+        Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+        Role userRole = roleRepository.findByName("User")
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
+        System.out.println(currentAuditor);
+        User userList=userRepository.findByEmail(currentAuditor.get())
+                .orElseThrow(() -> new RuntimeException("User is not found."));
+        Location location=userList.getLocation();
+        System.out.println(location);
+        return userRepository.findByRolesAndLocation(userRole,location)
+                .stream()
+                .filter(data->!data.getUsername().equalsIgnoreCase(userList.getUsername())).toList();
+
     }
 }
