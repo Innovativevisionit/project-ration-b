@@ -52,8 +52,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
                 .orElseThrow(()-> new NotFoundException(prod+" is not found"));
         Location location=locationRepository.findByName(loc)
                 .orElseThrow(()-> new NotFoundException(loc+" is not found"));
-
-        LocationProduct locationProduct=locationProductRepository.findByLocationAndProduct(product,location);
+        LocationProduct locationProduct=locationProductRepository.findByLocationAndProduct(location,product);
         return locationProduct;
     }
 }

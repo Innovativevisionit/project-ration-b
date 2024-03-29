@@ -10,5 +10,5 @@ import java.util.List;
 public interface LocationProductRepository extends JpaRepository<LocationProduct,Integer> {
     boolean existsByProductAndLocation(Product product, Location location);
     List<LocationProduct> findByLocation(Location location);
-    LocationProduct findByLocationAndProduct(Product product, Location location);
+    LocationProduct findByLocationAndProduct(Location location, Product product);
 }
