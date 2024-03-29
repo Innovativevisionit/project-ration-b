@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
 @Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
     @Autowired
@@ -68,10 +67,22 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         userRepository.save(user);
         return user;
     }
+
     public List<User> employeeList(){
         Role adminRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
-        return userRepository.findByRoles(adminRole);
+         
+        List<User> userList = userRepository.findByRoles(adminRole);
+
+        List<User> userResult = new ArrayList<>();
+
+        for (User users : userList) {
+            User user = new User();
+            user.setUsername(users.getUsername());
+            user.setEmail(users.getEmail());
+            userResult.add(user);
+        }
+        return userResult;
     }
     public List<User> userList(){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
