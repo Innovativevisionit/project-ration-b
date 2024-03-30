@@ -64,8 +64,19 @@ public class AddEmployeeController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-    @GetMapping("/userList")
+
+    @GetMapping("/usersList")
     public ResponseEntity<?> userList(){
+        try {
+           List<UserListRes> list= addEmployeeService.userList();
+           return ResponseEntity.ok(list);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    
+    @GetMapping("/empUserList")
+    public ResponseEntity<?> empUserList(){
         try {
             List<UserListRes> list= addEmployeeService.userList();
             return ResponseEntity.ok(list);

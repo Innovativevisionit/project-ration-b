@@ -8,7 +8,7 @@ public class UserListRes {
     private String email;
     private String locationName;
     private String locationId;
-    private String  smartId;
+    private String smartId;
     private String age;
     private String familyMembersCount;
 }

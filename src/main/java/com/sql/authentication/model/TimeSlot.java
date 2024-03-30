@@ -15,6 +15,6 @@ public class TimeSlot {
     @JoinColumn(name = "location_id")
     private Location location;
     private LocalDate date;
-    private LocalTime startTime;
-    private LocalTime endTime;
+    private String startTime;
+    private String endTime;
 }

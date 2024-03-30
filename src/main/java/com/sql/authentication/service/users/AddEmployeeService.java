@@ -14,5 +14,6 @@ public interface AddEmployeeService {
     List<UserListRes> userList();
     User updateUser(UpdateUserDto data);
     User deleteUser(int id);
+    List<UserListRes> empUserList();
 
 }

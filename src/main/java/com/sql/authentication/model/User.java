@@ -41,10 +41,11 @@ public class User {
     private Set<Role> roles = new HashSet<>();
     @ManyToOne
     @JoinColumn(name = "location_id")
-    private  Location location;
+    private Location location;
     private String smartId;
     private String age;
     private String familyMembersCount;
+    private String salary;
     
     public User(String username, String email, String password) {
         this.username = username;

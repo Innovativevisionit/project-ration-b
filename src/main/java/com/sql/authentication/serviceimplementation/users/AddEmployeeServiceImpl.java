@@ -71,6 +71,7 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         user.setSmartId(signUpRequest.getSmartId());
         user.setAge(signUpRequest.getAge());
         user.setFamilyMembersCount(signUpRequest.getFamilyMembersCount());
+        user.setSalary(signUpRequest.getSalary());
         userRepository.save(user);
         return user;
     }
@@ -125,12 +126,30 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
                     return modelMapper.map(list, EmpListRes.class);
                 }).toList();
     }
+
     public List<UserListRes> userList(){
-        Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+        
+        Role adminRole = roleRepository.findByName("User")
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
+         
+        List<User> userList = userRepository.findByRoles(adminRole);
+
+        return userList
+                .stream()
+               .map(list->{
+                    return modelMapper.map(list, UserListRes.class);
+                }).toList();
+    }
+
+    @Override
+    public List<UserListRes> empUserList() {
+        
+        // Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+
         Role userRole = roleRepository.findByName("User")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
-        System.out.println(currentAuditor);
-        User userList=userRepository.findByEmail(currentAuditor.get())
+        // System.out.println(currentAuditor);
+        User userList=userRepository.findByEmail("divya@gmail.com")
                 .orElseThrow(() -> new RuntimeException("User is not found."));
         Location location=userList.getLocation();
         System.out.println(location);
@@ -139,6 +158,6 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
                 .filter(data->!data.getUsername().equalsIgnoreCase(userList.getUsername())).map(list->{
                     return modelMapper.map(list,UserListRes.class);
                 }).toList();
-
     }
+   
 }
