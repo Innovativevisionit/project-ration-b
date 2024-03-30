@@ -6,22 +6,22 @@ import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignUpRequest;
 import com.sql.authentication.payload.response.ApiResponse;
+import com.sql.authentication.payload.response.EmpListRes;
+import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.repository.LocationRepository;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.service.users.AddEmployeeService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AuditorAware;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import java.util.*;
 @Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
     @Autowired
@@ -32,6 +32,10 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     private RoleRepository roleRepository;
     @Autowired
     private LocationRepository locationRepository;
+    @Autowired
+    private AuditorAware<String> auditorAware;
+    @Autowired
+    private ModelMapper modelMapper;
 
     public User addUser(SignUpRequest signUpRequest){
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -69,21 +73,32 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         return user;
     }
 
-    public List<User> employeeList(){
+    public List<EmpListRes> employeeList(){
         Role adminRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
          
         List<User> userList = userRepository.findByRoles(adminRole);
 
-        List<User> userResult = new ArrayList<>();
-
-        for (User users : userList) {
-            User user = new User();
-            user.setUsername(users.getUsername());
-            user.setEmail(users.getEmail());
-            userResult.add(user);
-        }
-        return userResult;
+        return userList
+                .stream()
+               .map(list->{
+                    return modelMapper.map(list, EmpListRes.class);
+                }).toList();
     }
+    public List<UserListRes> userList(){
+        Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+        Role userRole = roleRepository.findByName("User")
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
+        System.out.println(currentAuditor);
+        User userList=userRepository.findByEmail(currentAuditor.get())
+                .orElseThrow(() -> new RuntimeException("User is not found."));
+        Location location=userList.getLocation();
+        System.out.println(location);
+        return userRepository.findByRolesAndLocation(userRole,location)
+                .stream()
+                .filter(data->!data.getUsername().equalsIgnoreCase(userList.getUsername())).map(list->{
+                    return modelMapper.map(list,UserListRes.class);
+                }).toList();
 
+    }
 }

@@ -11,4 +11,6 @@ public interface LocationRepository extends JpaRepository<Location,Integer> {
     boolean existsByName(String name);
     Optional<Location> findByName(String name);
     List<Location> findAllByStatus(int i);
+    long countByStatus(int status);
+
 }
