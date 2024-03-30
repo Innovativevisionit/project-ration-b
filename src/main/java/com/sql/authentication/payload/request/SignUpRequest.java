@@ -22,5 +22,6 @@ public class SignUpRequest {
     private String age;
     private String familyMembersCount;
     private String smartId;
+    private String salary;
 
 }

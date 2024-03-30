@@ -11,5 +11,6 @@ public interface AddEmployeeService {
     User addUser(SignUpRequest signUpRequest);
     List<EmpListRes> employeeList();
     List<UserListRes> userList();
+    List<UserListRes> empUserList();
 
 }
