@@ -27,6 +27,7 @@ public class TimeSlotServiceImpl implements TimeSlotService {
     private UserRepository userRepository;
     @Autowired
     private AuditorAware<String> auditorAware;
+    
     public TimeSlot store(TimeSlotDto dto){
         LocalDate date=LocalDate.now();
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
