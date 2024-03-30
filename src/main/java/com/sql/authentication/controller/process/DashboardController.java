@@ -1,6 +1,5 @@
 package com.sql.authentication.controller.process;
 
-import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.service.process.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

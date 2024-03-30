@@ -1,5 +1,6 @@
 package com.sql.authentication.controller.users;
 
+import com.sql.authentication.dto.UpdateUserDto;
 import com.sql.authentication.exception.AlreadyExistsException;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignUpRequest;
@@ -68,6 +69,41 @@ public class AddEmployeeController {
         try {
             List<UserListRes> list= addEmployeeService.userList();
             return ResponseEntity.ok(list);
+        }catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @PostMapping("/updateUser")
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUserDto dto){
+        try{
+            dto.setRole("User");
+            User user=addEmployeeService.updateUser(dto);
+            return ResponseEntity.ok().body(user);
+        }catch (AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @PostMapping("/updateEmployee")
+    public ResponseEntity<?> updateEmployee(@RequestBody UpdateUserDto dto){
+        try{
+            dto.setRole("Employee");
+            User user=addEmployeeService.updateUser(dto);
+            return ResponseEntity.ok().body(user);
+        }catch (AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        }
+        catch (Exception e){
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> delete(@RequestParam int id){
+        try{
+            User user=addEmployeeService.deleteUser(id);
+            return ResponseEntity.ok(user);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
