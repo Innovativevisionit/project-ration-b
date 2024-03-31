@@ -167,5 +167,12 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
                     return modelMapper.map(list,UserListRes.class);
                 }).toList();
     }
-   
+    public List<String> smartCardList() {
+        Role userRole = roleRepository.findByName("User")
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
+        return  userRepository.findByRoles(userRole).stream().map(User::getSmartId).toList();
+
+    }
+
+
 }

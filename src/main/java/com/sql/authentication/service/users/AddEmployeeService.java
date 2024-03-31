@@ -15,5 +15,6 @@ public interface AddEmployeeService {
     User updateUser(UpdateUserDto data);
     User deleteUser(int id);
     List<UserListRes> empUserList();
+    List<String> smartCardList();
 
 }
