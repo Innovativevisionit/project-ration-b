@@ -25,4 +25,5 @@ public class ProductRequest {
     @JoinColumn(name = "product_id")
     private Product product;
     private BigDecimal stockKg;
+    private int status;
 }

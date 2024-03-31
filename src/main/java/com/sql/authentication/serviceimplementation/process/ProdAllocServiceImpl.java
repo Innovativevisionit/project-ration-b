@@ -1,11 +1,14 @@
 package com.sql.authentication.serviceimplementation.process;
 
+import com.sql.authentication.dto.IdDto;
 import com.sql.authentication.dto.ProdAllocDto;
+import com.sql.authentication.dto.ProdAllocUpdateDto;
 import com.sql.authentication.dto.ProductRequestDto;
 import com.sql.authentication.exception.AlreadyExistsException;
 import com.sql.authentication.exception.NotFoundException;
 import com.sql.authentication.model.*;
 import com.sql.authentication.payload.response.ProductLocationList;
+import com.sql.authentication.payload.response.ProductRequestList;
 import com.sql.authentication.repository.*;
 import com.sql.authentication.service.process.ProdAllocService;
 import org.modelmapper.ModelMapper;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,7 +49,20 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         locationProduct.setProduct(product);
         locationProduct.setLocation(location);
         locationProduct.setTotalKg(prodAllocDto.getAllocatedKg());
+        locationProduct.setStockKg(prodAllocDto.getAllocatedKg());
         locationProductRepository.save(locationProduct);
+        return locationProduct;
+    }
+    public LocationProduct update(ProdAllocUpdateDto prodAllocDto){
+        LocationProduct locationProduct=locationProductRepository.findById(prodAllocDto.getId()).orElseThrow(()->new NotFoundException(prodAllocDto.getId()+"Not Found"));
+        locationProduct.setTotalKg(prodAllocDto.getAllocKg());
+        locationProduct.setStockKg(prodAllocDto.getAllocKg());
+        locationProductRepository.save(locationProduct);
+        return locationProduct;
+    }
+    public LocationProduct delete(IdDto prodAllocDto){
+        LocationProduct locationProduct=locationProductRepository.findById(prodAllocDto.getId()).orElseThrow(()->new NotFoundException(prodAllocDto.getId()+"Not Found"));
+        locationProductRepository.delete(locationProduct);
         return locationProduct;
     }
     // Location Wise Product Details
@@ -56,12 +73,9 @@ public class ProdAllocServiceImpl implements ProdAllocService {
             return modelMapper.map(data,ProductLocationList.class);
         }).toList();
     }
-    @Autowired
     public List<LocationProduct> allLocationProduct(){
-
         return locationProductRepository.findAll();
     }
-    @Autowired
     public LocationProduct locationProduct(String loc,String prod){
         Product product=productRepository.findByName(prod)
                 .orElseThrow(()-> new NotFoundException(prod+" is not found"));
@@ -70,7 +84,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         LocationProduct locationProduct=locationProductRepository.findByLocationAndProduct(location,product);
         return locationProduct;
     }
-    @Autowired
+    // Employee Raise the Request For Product when stock kg is insufficient
     public ProductRequest productRequest(ProductRequestDto requestDto){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
         Optional<User> user=userRepository.findByEmail(currentAuditor.get());
@@ -81,14 +95,51 @@ public class ProdAllocServiceImpl implements ProdAllocService {
             if(locationProduct==null){
                 throw  new NotFoundException("For this Product Location is not found");
             }
-            BigDecimal result = locationProduct.getTotalKg().divide(BigDecimal.valueOf(2), 10);
-            productRequest.setLocation(user.get().getLocation());
-            productRequest.setProduct(product);
-            productRequest.setStockKg(locationProduct.getStockKg());
-            productRequest.setUser(user.get());
-            productRequestRepository.save(productRequest);
+            Optional<ProductRequest> byLocationAndProduct=productRequestRepository
+                    .findByLocationAndProductAndStatus(user.get().getLocation(), product,1);
+            if(byLocationAndProduct.isPresent()){
+                throw  new NotFoundException("Already Request Raised");
+            }
+
+            BigDecimal result = locationProduct.getTotalKg().divide(BigDecimal.valueOf(2));
+            if(locationProduct.getStockKg().compareTo(result)>=0){
+                System.out.println(result);
+                productRequest.setLocation(user.get().getLocation());
+                productRequest.setProduct(product);
+                productRequest.setStockKg(locationProduct.getStockKg());
+                productRequest.setUser(user.get());
+                productRequest.setStatus(1);
+                productRequestRepository.save(productRequest);
+            }else {
+                System.out.println(locationProduct.getStockKg().compareTo(result));
+            }
         }
         return productRequest;
 
     }
+    //Raised Request for Admin Side & Employee Side
+    public List<ProductRequestList> productRequestListAdmin(String role, int status){
+        List<ProductRequest> productRequests = null;
+        if(role.equalsIgnoreCase("Admin")) {
+            productRequests = productRequestRepository.findByStatus(status);
+        }else{
+            Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+            Optional<User> user=userRepository.findByEmail(currentAuditor.get());
+            if(user.isPresent()){
+                productRequests = productRequestRepository.findByLocationAndStatus(user.get().getLocation(),status);
+            }
+        }
+        return productRequests.stream().map(data-> modelMapper.map(data,ProductRequestList.class)).toList();
+    }
+    //Request Accept
+    public ProductRequest productRequestAccept(int id){
+        ProductRequest productRequest=productRequestRepository.findById(id).orElseThrow(()->new NotFoundException(id+"Not Found"));
+        productRequest.setStatus(2);
+        productRequestRepository.save(productRequest);
+        LocationProduct locationProduct=locationProductRepository.findByLocationAndProduct(productRequest.getLocation(),productRequest.getProduct());
+        locationProduct.setStockKg(locationProduct.getTotalKg());
+        locationProductRepository.save(locationProduct);
+        return productRequest;
+    }
+
 }

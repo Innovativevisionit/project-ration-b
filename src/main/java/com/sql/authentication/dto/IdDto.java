@@ -3,7 +3,6 @@ package com.sql.authentication.dto;
 import lombok.Data;
 
 @Data
-
-public class ProductRequestDto {
-    private String product;
+public class IdDto {
+    private int id;
 }
