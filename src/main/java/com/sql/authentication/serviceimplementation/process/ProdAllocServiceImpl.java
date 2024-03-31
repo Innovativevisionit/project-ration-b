@@ -5,8 +5,10 @@ import com.sql.authentication.dto.ProductRequestDto;
 import com.sql.authentication.exception.AlreadyExistsException;
 import com.sql.authentication.exception.NotFoundException;
 import com.sql.authentication.model.*;
+import com.sql.authentication.payload.response.ProductLocationList;
 import com.sql.authentication.repository.*;
 import com.sql.authentication.service.process.ProdAllocService;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     private UserRepository userRepository;
     @Autowired
     private AuditorAware<String> auditorAware;
+    @Autowired
+    private ModelMapper modelMapper;
     public LocationProduct store(ProdAllocDto prodAllocDto){
         LocationProduct locationProduct=new LocationProduct();
         Product product=productRepository.findByName(prodAllocDto.getProduct())
@@ -45,12 +49,15 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         return locationProduct;
     }
     // Location Wise Product Details
-    public List<LocationProduct> locationProductList(String location){
+    public List<ProductLocationList> locationProductList(String location){
         Location locationDetails=locationRepository.findByName(location)
                 .orElseThrow(()-> new NotFoundException(location+" is not found"));
-        return locationProductRepository.findByLocation(locationDetails);
+        return locationProductRepository.findByLocation(locationDetails).stream().map(data->{
+            return modelMapper.map(data,ProductLocationList.class);
+        }).toList();
     }
     public List<LocationProduct> allLocationProduct(){
+
         return locationProductRepository.findAll();
     }
     public LocationProduct locationProduct(String loc,String prod){
@@ -71,6 +78,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
             if(locationProduct==null){
                 throw  new NotFoundException("For this Product Location is not found");
             }
+            BigDecimal result = locationProduct.getTotalKg().divide(BigDecimal.valueOf(2), 10);
             productRequest.setLocation(user.get().getLocation());
             productRequest.setProduct(product);
             productRequest.setStockKg(locationProduct.getStockKg());

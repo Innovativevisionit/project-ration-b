@@ -7,14 +7,14 @@ import com.sql.authentication.exception.NotFoundException;
 import com.sql.authentication.model.LocationProduct;
 import com.sql.authentication.model.ProductRequest;
 import com.sql.authentication.payload.response.ErrorResponse;
+import com.sql.authentication.payload.response.ProductLocationList;
 import com.sql.authentication.service.process.ProdAllocService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/prodAlloc")
@@ -22,7 +22,7 @@ public class ProdAllocController {
     @Autowired
     private ProdAllocService prodAllocService;
     @PostMapping("/store")
-    public Object store(@RequestBody ProdAllocDto dto){
+    public ResponseEntity<?> store(@RequestBody ProdAllocDto dto){
         try{
             LocationProduct locationProduct=prodAllocService.store(dto);
             return ResponseEntity.status(HttpStatus.CONFLICT).body(locationProduct);
@@ -39,7 +39,7 @@ public class ProdAllocController {
         }
     }
     @PostMapping("/productRequest")
-    public Object productRequest(@RequestBody ProductRequestDto dto){
+    public ResponseEntity<?> productRequest(@RequestBody ProductRequestDto dto){
         try{
             ProductRequest locationProduct=prodAllocService.productRequest(dto);
             return ResponseEntity.status(HttpStatus.CONFLICT).body(locationProduct);
@@ -55,4 +55,11 @@ public class ProdAllocController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
+    @GetMapping("/locationProductList")
+    public List<ProductLocationList> locationProductList(){
+        String location="Cuddalore";
+        return prodAllocService.locationProductList(location);
+
+    }
+
 }
