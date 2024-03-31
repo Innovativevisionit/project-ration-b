@@ -55,6 +55,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         locationProductRepository.save(locationProduct);
         return locationProduct;
     }
+    @Override
     public LocationProduct update(ProdAllocUpdateDto prodAllocDto){
         LocationProduct locationProduct=locationProductRepository.findById(prodAllocDto.getId()).orElseThrow(()->new NotFoundException(prodAllocDto.getId()+"Not Found"));
         locationProduct.setTotalKg(prodAllocDto.getAllocKg());
@@ -62,6 +63,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         locationProductRepository.save(locationProduct);
         return locationProduct;
     }
+
+    @Override
     public LocationProduct delete(IdDto prodAllocDto){
         LocationProduct locationProduct=locationProductRepository.findById(prodAllocDto.getId()).orElseThrow(()->new NotFoundException(prodAllocDto.getId()+"Not Found"));
         locationProductRepository.delete(locationProduct);
@@ -79,6 +82,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     public List<LocationProduct> allLocationProduct(){
         return locationProductRepository.findAll();
     }
+
     public LocationProduct locationProduct(String loc,String prod){
         Product product=productRepository.findByName(prod)
                 .orElseThrow(()-> new NotFoundException(prod+" is not found"));
@@ -88,6 +92,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         return locationProduct;
     }
     // Employee Raise the Request For Product when stock kg is insufficient
+    @Override
     public ProductRequest productRequest(ProductRequestDto requestDto){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
         Optional<User> user=userRepository.findByEmail(currentAuditor.get());
@@ -121,6 +126,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
 
     }
     //Raised Request for Admin Side & Employee Side
+    @Override
     public List<ProductRequestList> productRequestListAdmin(String role, int status){
         List<ProductRequest> productRequests = null;
         if(role.equalsIgnoreCase("Admin")) {
@@ -135,6 +141,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         return productRequests.stream().map(data-> modelMapper.map(data,ProductRequestList.class)).toList();
     }
     //Request Accept
+    @Override
     public ProductRequest productRequestAccept(int id){
         ProductRequest productRequest=productRequestRepository.findById(id).orElseThrow(()->new NotFoundException(id+"Not Found"));
         productRequest.setStatus(2);
