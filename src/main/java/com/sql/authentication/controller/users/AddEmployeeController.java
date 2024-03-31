@@ -121,4 +121,8 @@ public class AddEmployeeController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+    @GetMapping("/smartCardList")
+    public List<String> getSmartIdList(){
+        return addEmployeeService.smartCardList();
+    }
 }
