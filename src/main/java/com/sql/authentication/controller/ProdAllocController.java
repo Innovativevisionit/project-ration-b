@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ProdAllocController {
     @Autowired
     private ProdAllocService prodAllocService;
+    
     @PostMapping("/store")
     public Object store(@RequestBody ProdAllocDto dto){
         try{
