@@ -74,6 +74,7 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         return user;
     }
 
+    @Override
     public List<EmpListRes> employeeList(){
         Role adminRole = roleRepository.findByName("Employee")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
@@ -87,6 +88,7 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
                 }).toList();
     }
 
+    @Override
     public List<UserListRes> userList(){
         
         Role adminRole = roleRepository.findByName("User")

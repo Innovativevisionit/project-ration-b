@@ -49,14 +49,15 @@ public class ProductController {
     }
 
     @GetMapping("/activeList")
-    public ResponseEntity<?> activeList(){
+    public List<Product> activeList(){
         try {
-            List<Product> products=productService.activeList();
-            Response<List<Product>> response=new Response<>(HttpStatus.OK.value(),"Success",products);
-            return ResponseEntity.ok().body(response);
+            return productService.activeList();
+            // Response<List<Product>> response=new Response<>(HttpStatus.OK.value(),"Success",products);
+            // return ResponseEntity.ok().body(response);
         }catch (Exception e){
-            ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
-            return ResponseEntity.internalServerError().body(response);
+            // ErrorResponse response = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+            // return ResponseEntity.internalServerError().body(response);
+            return null;
         }
     }
     
