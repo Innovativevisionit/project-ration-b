@@ -13,10 +13,10 @@ import java.time.LocalDate;
 public class UserToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private User user;
+    private int id;
     @ManyToOne
     @JoinColumn(name = "location_id")
+    private User user;
     private LocalDate tokenDate;
     private int tokenStatus;
 }

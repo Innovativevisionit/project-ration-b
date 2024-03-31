@@ -16,7 +16,7 @@ import java.time.LocalDate;
 public class Token {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private int status;
     private LocalDate date;
 
