@@ -18,7 +18,7 @@ public class ProdPurchaseController {
     private ProductPurchaseService productPurchaseService;
 
     @PostMapping("/store")
-    public UserProdPurchase prodPurchase(@Valid @RequestBody PurchaseDto dto){
+    public PurchaseDto prodPurchase(@Valid @RequestBody PurchaseDto dto){
         return productPurchaseService.store(dto);
     }
     

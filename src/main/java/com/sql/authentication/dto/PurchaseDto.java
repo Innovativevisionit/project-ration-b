@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 public class PurchaseDto {
     @NotBlank(message = "Smart Card Id is required")
     private String smartId;
-    @NotBlank(message = "Product is required")
+    // @NotBlank(message = "Product is required")
     private String product;
     @NotNull(message = "Kg is required")
     private BigDecimal kg;
