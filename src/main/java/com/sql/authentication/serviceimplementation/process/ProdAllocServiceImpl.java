@@ -23,6 +23,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     private LocationRepository locationRepository;
     @Autowired
     private LocationProductRepository locationProductRepository;
+    
     public LocationProduct store(ProdAllocDto prodAllocDto){
         LocationProduct locationProduct=new LocationProduct();
         Product product=productRepository.findByName(prodAllocDto.getProduct())

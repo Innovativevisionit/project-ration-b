@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/purchase")
 public class ProdPurchaseController {
+
     @Autowired
     private ProductPurchaseService productPurchaseService;
+
     @PostMapping("/store")
     public UserProdPurchase prodPurchase(@Valid @RequestBody PurchaseDto dto){
         return productPurchaseService.store(dto);
     }
+    
 }
 

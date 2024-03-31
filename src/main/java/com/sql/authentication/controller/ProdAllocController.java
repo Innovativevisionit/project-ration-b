@@ -3,6 +3,7 @@ package com.sql.authentication.controller;
 import com.sql.authentication.dto.ProdAllocDto;
 import com.sql.authentication.exception.AlreadyExistsException;
 import com.sql.authentication.exception.NotFoundException;
+import com.sql.authentication.model.LocationProduct;
 import com.sql.authentication.payload.response.ErrorResponse;
 import com.sql.authentication.service.process.ProdAllocService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class ProdAllocController {
     public Object store(@RequestBody ProdAllocDto dto){
         try{
             return  prodAllocService.store(dto);
-        } catch (AlreadyExistsException e) {
+                    } catch (AlreadyExistsException e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage());
             return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
         }
