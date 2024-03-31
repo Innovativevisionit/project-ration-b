@@ -1,6 +1,8 @@
 package com.sql.authentication.serviceimplementation.users;
 
+import com.sql.authentication.dto.UpdateUserDto;
 import com.sql.authentication.exception.AlreadyExistsException;
+import com.sql.authentication.exception.NotFoundException;
 import com.sql.authentication.model.Location;
 import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
@@ -73,6 +75,44 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         userRepository.save(user);
         return user;
     }
+    public User updateUser(UpdateUserDto data){
+        User updateUser= userRepository.findById(data.getId())
+                .orElseThrow(()->new NotFoundException(data.getId() + " Id not Found"));
+        String userName = data.getUsername();
+        String email= data.getEmail();
+        if (!userName.equals(updateUser.getUsername())) {
+            User existingUser = userRepository.findByUsername(userName).orElse(null);
+            if (existingUser != null && !existingUser.getId().equals(data.getId())) {
+                throw new AlreadyExistsException("Band name is already taken by another Band");
+            }
+        }
+        if (!email.equals(updateUser.getEmail())) {
+            User existingUser = userRepository.findByEmail(email).orElse(null);
+            if (existingUser != null && !existingUser.getId().equals(data.getId())) {
+                throw new AlreadyExistsException("Email is already taken by another user");
+            }
+        }
+        Location location =locationRepository.findByName(data.getLocation())
+                .orElseThrow(()->
+                     new NotFoundException("Location is not found"));
+        updateUser.setLocation(location);
+        updateUser.setUsername(userName);
+        updateUser.setEmail(data.getEmail());
+        if(data.getRole().equalsIgnoreCase("User")){
+            updateUser.setSmartId(data.getSmartId());
+            updateUser.setAge(data.getAge());
+            updateUser.setFamilyMembersCount(data.getFamilyMembersCount());
+        }
+        userRepository.save(updateUser);
+        return updateUser;
+    }
+    public User deleteUser(int id){
+        User updateUser= userRepository.findById(id)
+                .orElseThrow(()->new NotFoundException(id + " Id not Found"));
+        userRepository.deleteById(id);
+        return updateUser;
+    }
+
 
     @Override
     public List<EmpListRes> employeeList(){
