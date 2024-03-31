@@ -12,6 +12,8 @@ import com.sql.authentication.payload.response.ErrorResponse;
 import com.sql.authentication.payload.response.ProductLocationList;
 import com.sql.authentication.payload.response.ProductRequestList;
 import com.sql.authentication.service.process.ProdAllocService;
+import com.sql.authentication.utils.AuthDetails;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +27,8 @@ import java.util.List;
 public class ProdAllocController {
     @Autowired
     private ProdAllocService prodAllocService;
+    @Autowired
+    private AuthDetails authDetails;
     
     @PostMapping("/store")
     public ResponseEntity<?> store(@RequestBody ProdAllocDto dto){
@@ -75,9 +79,9 @@ public class ProdAllocController {
         }
     }
     @PostMapping("/productRequest")
-    public ResponseEntity<?> productRequest(@RequestBody ProductRequestDto dto){
+    public ResponseEntity<?> productRequest(@RequestBody ProductRequestDto dto, HttpSession session){
         try{
-            ProductRequest locationProduct=prodAllocService.productRequest(dto);
+            ProductRequest locationProduct=prodAllocService.productRequest(dto,session);
             return ResponseEntity.status(HttpStatus.OK).body(locationProduct);
         } catch (AlreadyExistsException e) {
             ErrorResponse response = new ErrorResponse(HttpStatus.CONFLICT.value(), e.getMessage());
@@ -109,17 +113,16 @@ public class ProdAllocController {
         }
     }
     @GetMapping("/locationProductList")
-    public List<ProductLocationList> locationProductList(){
-        String location="parangipettai";
-        return prodAllocService.locationProductList(location);
+    public List<ProductLocationList> locationProductList(HttpSession session){
+        return prodAllocService.locationProductList(session);
     }
     @GetMapping("/requestListAdmin")
-    public List<ProductRequestList> productRequestList(@RequestParam int status){
-        return prodAllocService.productRequestListAdmin("Admin",status);
+    public List<ProductRequestList> productRequestList(@RequestParam int status,HttpSession session){
+        return prodAllocService.productRequestListAdmin("Admin",status,session);
     }
     @GetMapping("/requestListEmp")
-    public List<ProductRequestList> productRequestListEmp(@RequestParam int status){
-        return prodAllocService.productRequestListAdmin("Employee",status);
+    public List<ProductRequestList> productRequestListEmp(@RequestParam int status,HttpSession session){
+        return prodAllocService.productRequestListAdmin("Employee",status,session);
     }
 
 
