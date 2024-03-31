@@ -37,6 +37,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     private AuditorAware<String> auditorAware;
     @Autowired
     private ModelMapper modelMapper;
+
+    @Override
     public LocationProduct store(ProdAllocDto prodAllocDto){
         LocationProduct locationProduct=new LocationProduct();
         Product product=productRepository.findByName(prodAllocDto.getProduct())
@@ -66,6 +68,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         return locationProduct;
     }
     // Location Wise Product Details
+    @Override
     public List<ProductLocationList> locationProductList(String location){
         Location locationDetails=locationRepository.findByName(location)
                 .orElseThrow(()-> new NotFoundException(location+" is not found"));

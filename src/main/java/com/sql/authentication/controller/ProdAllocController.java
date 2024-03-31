@@ -110,7 +110,7 @@ public class ProdAllocController {
     }
     @GetMapping("/locationProductList")
     public List<ProductLocationList> locationProductList(){
-        String location="Cuddalore";
+        String location="parangipettai";
         return prodAllocService.locationProductList(location);
     }
     @GetMapping("/requestListAdmin")
