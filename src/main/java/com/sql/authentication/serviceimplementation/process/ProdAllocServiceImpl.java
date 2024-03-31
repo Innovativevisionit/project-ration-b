@@ -33,6 +33,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     private AuditorAware<String> auditorAware;
     @Autowired
     private ModelMapper modelMapper;
+
+    @Override
     public LocationProduct store(ProdAllocDto prodAllocDto){
         LocationProduct locationProduct=new LocationProduct();
         Product product=productRepository.findByName(prodAllocDto.getProduct())
@@ -49,6 +51,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         return locationProduct;
     }
     // Location Wise Product Details
+    @Override
     public List<ProductLocationList> locationProductList(String location){
         Location locationDetails=locationRepository.findByName(location)
                 .orElseThrow(()-> new NotFoundException(location+" is not found"));
@@ -56,12 +59,12 @@ public class ProdAllocServiceImpl implements ProdAllocService {
             return modelMapper.map(data,ProductLocationList.class);
         }).toList();
     }
-    @Autowired
+
     public List<LocationProduct> allLocationProduct(){
 
         return locationProductRepository.findAll();
     }
-    @Autowired
+
     public LocationProduct locationProduct(String loc,String prod){
         Product product=productRepository.findByName(prod)
                 .orElseThrow(()-> new NotFoundException(prod+" is not found"));
@@ -70,7 +73,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         LocationProduct locationProduct=locationProductRepository.findByLocationAndProduct(location,product);
         return locationProduct;
     }
-    @Autowired
+    
+    @Override
     public ProductRequest productRequest(ProductRequestDto requestDto){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
         Optional<User> user=userRepository.findByEmail(currentAuditor.get());
