@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+
 @Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
     @Autowired
@@ -39,6 +40,7 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     @Autowired
     private ModelMapper modelMapper;
 
+    @Override
     public User addUser(SignUpRequest signUpRequest){
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
            throw new AlreadyExistsException("Username is already taken!");
@@ -75,6 +77,8 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         userRepository.save(user);
         return user;
     }
+
+    @Override
     public User updateUser(UpdateUserDto data){
         User updateUser= userRepository.findById(data.getId())
                 .orElseThrow(()->new NotFoundException(data.getId() + " Id not Found"));
@@ -106,6 +110,8 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         userRepository.save(updateUser);
         return updateUser;
     }
+
+    @Override
     public User deleteUser(int id){
         User updateUser= userRepository.findById(id)
                 .orElseThrow(()->new NotFoundException(id + " Id not Found"));

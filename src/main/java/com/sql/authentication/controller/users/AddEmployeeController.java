@@ -21,8 +21,10 @@ import java.util.Set;
 @RestController
 @RequestMapping("api/users")
 public class AddEmployeeController {
+
     @Autowired
     private AddEmployeeService addEmployeeService;
+    
     @PostMapping("/addUser")
     public ResponseEntity<?> addUser(@RequestBody SignUpRequest signUpRequest){
         try{
