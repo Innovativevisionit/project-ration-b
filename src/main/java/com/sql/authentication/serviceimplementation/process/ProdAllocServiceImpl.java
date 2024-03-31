@@ -56,10 +56,12 @@ public class ProdAllocServiceImpl implements ProdAllocService {
             return modelMapper.map(data,ProductLocationList.class);
         }).toList();
     }
+    @Autowired
     public List<LocationProduct> allLocationProduct(){
 
         return locationProductRepository.findAll();
     }
+    @Autowired
     public LocationProduct locationProduct(String loc,String prod){
         Product product=productRepository.findByName(prod)
                 .orElseThrow(()-> new NotFoundException(prod+" is not found"));
@@ -68,6 +70,7 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         LocationProduct locationProduct=locationProductRepository.findByLocationAndProduct(location,product);
         return locationProduct;
     }
+    @Autowired
     public ProductRequest productRequest(ProductRequestDto requestDto){
         Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
         Optional<User> user=userRepository.findByEmail(currentAuditor.get());

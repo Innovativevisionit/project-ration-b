@@ -21,6 +21,7 @@ import java.util.List;
 public class ProdAllocController {
     @Autowired
     private ProdAllocService prodAllocService;
+    
     @PostMapping("/store")
     public ResponseEntity<?> store(@RequestBody ProdAllocDto dto){
         try{
