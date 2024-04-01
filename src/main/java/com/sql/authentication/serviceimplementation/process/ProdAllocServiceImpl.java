@@ -11,6 +11,9 @@ import com.sql.authentication.payload.response.ProductLocationList;
 import com.sql.authentication.payload.response.ProductRequestList;
 import com.sql.authentication.repository.*;
 import com.sql.authentication.service.process.ProdAllocService;
+import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+import com.sql.authentication.utils.AuthDetails;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
@@ -35,6 +38,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     private UserRepository userRepository;
     @Autowired
     private AuditorAware<String> auditorAware;
+    @Autowired
+    private AuthDetails authDetails;
     @Autowired
     private ModelMapper modelMapper;
 
@@ -72,10 +77,13 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     }
     // Location Wise Product Details
     @Override
-    public List<ProductLocationList> locationProductList(String location){
-        Location locationDetails=locationRepository.findByName(location)
-                .orElseThrow(()-> new NotFoundException(location+" is not found"));
-        return locationProductRepository.findByLocation(locationDetails).stream().map(data->{
+    public List<ProductLocationList> locationProductList(HttpSession session){
+        UserDetailsImpl userDetails=authDetails.getUserDetails(session);
+
+        Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
+//        Location locationDetails=locationRepository.findByName(location)
+//                .orElseThrow(()-> new NotFoundException(location+" is not found"));
+        return locationProductRepository.findByLocation(user.get().getLocation()).stream().map(data->{
             return modelMapper.map(data,ProductLocationList.class);
         }).toList();
     }
@@ -92,10 +100,12 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         return locationProduct;
     }
     // Employee Raise the Request For Product when stock kg is insufficient
-    @Override
-    public ProductRequest productRequest(ProductRequestDto requestDto){
-        Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
-        Optional<User> user=userRepository.findByEmail(currentAuditor.get());
+    public ProductRequest productRequest(ProductRequestDto requestDto, HttpSession session){
+//        Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+        UserDetailsImpl userDetails=authDetails.getUserDetails(session);
+
+        Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
+
         Product product=productRepository.findByName(requestDto.getProduct()).orElseThrow(()->new NotFoundException("Product is not Found"));
         ProductRequest productRequest=new ProductRequest();
         if(user.isPresent()){
@@ -126,14 +136,13 @@ public class ProdAllocServiceImpl implements ProdAllocService {
 
     }
     //Raised Request for Admin Side & Employee Side
-    @Override
-    public List<ProductRequestList> productRequestListAdmin(String role, int status){
+    public List<ProductRequestList> productRequestListAdmin(String role, int status,HttpSession session){
         List<ProductRequest> productRequests = null;
         if(role.equalsIgnoreCase("Admin")) {
             productRequests = productRequestRepository.findByStatus(status);
         }else{
-            Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
-            Optional<User> user=userRepository.findByEmail(currentAuditor.get());
+            UserDetailsImpl userDetails=authDetails.getUserDetails(session);
+            Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
             if(user.isPresent()){
                 productRequests = productRequestRepository.findByLocationAndStatus(user.get().getLocation(),status);
             }
