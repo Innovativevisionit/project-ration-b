@@ -6,8 +6,8 @@ import com.sql.authentication.model.TimeSlot;
 import java.util.List;
 
 public interface TimeSlotService {
-    TimeSlot store(TimeSlotDto dto);
-    TimeSlot currentTimeSlot();
+    TimeSlot store(TimeSlotDto dto,String email);
+    TimeSlot currentTimeSlot(String email);
     List<TimeSlot> list();
 
 }

@@ -5,7 +5,7 @@ import lombok.Data;
 import java.time.LocalTime;
 @Data
 public class TimeSlotDto {
-    private String startTime;
-    private String endTime;
+    private String fromTime;
+    private String toTime;
 
 }

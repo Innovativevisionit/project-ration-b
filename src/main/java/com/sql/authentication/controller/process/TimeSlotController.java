@@ -17,19 +17,19 @@ import java.util.List;
 public class TimeSlotController {
     @Autowired
     private TimeSlotService timeSlotService;
-    @PostMapping("store")
-    public ResponseEntity<?> store(@RequestBody TimeSlotDto dto){
+    @PostMapping("store/{email}")
+    public ResponseEntity<?> store(@RequestBody TimeSlotDto dto,@PathVariable String email){
         try {
-            TimeSlot timeSlot=timeSlotService.store(dto);
+            TimeSlot timeSlot=timeSlotService.store(dto,email);
             return ResponseEntity.ok(timeSlot);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-    @GetMapping("today")
-    public ResponseEntity<?> currentTimeSlot(){
+    @GetMapping("today/{email}")
+    public ResponseEntity<?> currentTimeSlot(@PathVariable String email){
         try {
-            TimeSlot timeSlot=timeSlotService.currentTimeSlot();
+            TimeSlot timeSlot=timeSlotService.currentTimeSlot(email);
             return ResponseEntity.ok(timeSlot);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
