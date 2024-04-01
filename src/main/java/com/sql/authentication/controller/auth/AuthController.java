@@ -83,7 +83,7 @@ public class AuthController {
                 .body(new LoginResponse(userDetails.getId(),
                         userDetails.getUsername(),
                         userDetails.getEmail(),
-                        roles,jwtToken));
+                        roles.get(0),jwtToken));
     }
 
     @PostMapping("/signup")
