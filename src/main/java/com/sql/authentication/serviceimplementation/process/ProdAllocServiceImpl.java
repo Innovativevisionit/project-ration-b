@@ -87,6 +87,16 @@ public class ProdAllocServiceImpl implements ProdAllocService {
         }).toList();
     }
 
+    @Override
+    public List<ProductLocationList> locationProduct(){
+        
+        // Optional<User> user=userRepository.findByEmail(email);
+//        Location locationDetails=locationRepository.findByName(location)
+//                .orElseThrow(()-> new NotFoundException(location+" is not found"));
+        return locationProductRepository.findAll().stream().map(data->{
+            return modelMapper.map(data,ProductLocationList.class);
+        }).toList();
+    }
     public List<LocationProduct> allLocationProduct(){
         return locationProductRepository.findAll();
     }

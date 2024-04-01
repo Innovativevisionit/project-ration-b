@@ -64,7 +64,6 @@ public class AuthController {
         session.setAttribute("user",userDetails);
         session.setAttribute("email", loginRequest.getEmail());
 
-        System.out.println("Email set in session: " + session.getAttribute("email"));
         // if(loginRequest.getEmail() != null){
         //     System.out.println("6"+loginRequest.getEmail());
         //     session.setAttribute("email", loginRequest.getEmail());
