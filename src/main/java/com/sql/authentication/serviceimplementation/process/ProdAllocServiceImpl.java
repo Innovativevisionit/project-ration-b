@@ -63,8 +63,8 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     @Override
     public LocationProduct update(ProdAllocUpdateDto prodAllocDto){
         LocationProduct locationProduct=locationProductRepository.findById(prodAllocDto.getId()).orElseThrow(()->new NotFoundException(prodAllocDto.getId()+"Not Found"));
-        locationProduct.setTotalKg(prodAllocDto.getAllocKg());
-        locationProduct.setStockKg(prodAllocDto.getAllocKg());
+        locationProduct.setTotalKg(prodAllocDto.getTotalKg());
+        locationProduct.setStockKg(prodAllocDto.getTotalKg());
         locationProductRepository.save(locationProduct);
         return locationProduct;
     }
@@ -77,16 +77,16 @@ public class ProdAllocServiceImpl implements ProdAllocService {
     }
     // Location Wise Product Details
     @Override
-    public List<ProductLocationList> locationProductList(HttpSession session){
-        UserDetailsImpl userDetails=authDetails.getUserDetails(session);
-
-        Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
+    public List<ProductLocationList> locationProductList(String email){
+        
+        Optional<User> user=userRepository.findByEmail(email);
 //        Location locationDetails=locationRepository.findByName(location)
 //                .orElseThrow(()-> new NotFoundException(location+" is not found"));
         return locationProductRepository.findByLocation(user.get().getLocation()).stream().map(data->{
             return modelMapper.map(data,ProductLocationList.class);
         }).toList();
     }
+
     public List<LocationProduct> allLocationProduct(){
         return locationProductRepository.findAll();
     }

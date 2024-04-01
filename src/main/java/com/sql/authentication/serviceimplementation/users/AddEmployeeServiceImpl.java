@@ -1,5 +1,15 @@
 package com.sql.authentication.serviceimplementation.users;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.sql.authentication.dto.UpdateUserDto;
 import com.sql.authentication.exception.AlreadyExistsException;
 import com.sql.authentication.exception.NotFoundException;
@@ -7,23 +17,16 @@ import com.sql.authentication.model.Location;
 import com.sql.authentication.model.Role;
 import com.sql.authentication.model.User;
 import com.sql.authentication.payload.request.SignUpRequest;
-import com.sql.authentication.payload.response.ApiResponse;
 import com.sql.authentication.payload.response.EmpListRes;
 import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.repository.LocationRepository;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.service.users.AddEmployeeService;
-import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.AuditorAware;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+import com.sql.authentication.utils.AuthDetails;
 
-import java.util.*;
+import jakarta.servlet.http.HttpSession;
 
 @Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
@@ -39,6 +42,8 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     private AuditorAware<String> auditorAware;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private AuthDetails authDetails;
 
     @Override
     public User addUser(SignUpRequest signUpRequest){
@@ -152,14 +157,12 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     }
 
     @Override
-    public List<UserListRes> empUserList() {
-        
-        // Optional<String> currentAuditor = auditorAware.getCurrentAuditor();
+    public List<UserListRes> empUserList(String email) {
 
         Role userRole = roleRepository.findByName("User")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
-        // System.out.println(currentAuditor);
-        User userList=userRepository.findByEmail("divya@gmail.com")
+
+        User userList=userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User is not found."));
         Location location=userList.getLocation();
         System.out.println(location);
@@ -169,10 +172,14 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
                     return modelMapper.map(list,UserListRes.class);
                 }).toList();
     }
-    public List<String> smartCardList() {
+
+    public List<String> smartCardList(String email) {
         Role userRole = roleRepository.findByName("User")
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
-        return  userRepository.findByRoles(userRole).stream().map(User::getSmartId).toList();
+                User userList=userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User is not found."));
+        Location location=userList.getLocation();        
+        return  userRepository.findByRolesAndLocation(userRole,location).stream().map(User::getSmartId).toList();
 
     }
 

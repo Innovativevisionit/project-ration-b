@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 public class ProdAllocUpdateDto {
     @NotNull(message = "Id is required")
     private int id;
-    private BigDecimal allocKg;
+    private BigDecimal totalKg;
 }

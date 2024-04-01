@@ -8,6 +8,9 @@ import com.sql.authentication.payload.response.EmpListRes;
 import com.sql.authentication.payload.response.ErrorResponse;
 import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.service.users.AddEmployeeService;
+
+import jakarta.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -77,15 +80,17 @@ public class AddEmployeeController {
         }
     }
     
-    @GetMapping("/empUserList")
-    public ResponseEntity<?> empUserList(){
+    @GetMapping("/empUserList/{email}")
+    public ResponseEntity<?> empUserList(@PathVariable String email){
         try {
-            List<UserListRes> list= addEmployeeService.userList();
+            
+            List<UserListRes> list= addEmployeeService.empUserList(email);
             return ResponseEntity.ok(list);
         }catch (Exception e){
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
+
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody UpdateUserDto dto){
         try{
@@ -121,8 +126,8 @@ public class AddEmployeeController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-    @GetMapping("/smartCardList")
-    public List<String> getSmartIdList(){
-        return addEmployeeService.smartCardList();
+    @GetMapping("/smartCardList/{email}")
+    public List<String> getSmartIdList(@PathVariable String email){
+        return addEmployeeService.smartCardList(email);
     }
 }

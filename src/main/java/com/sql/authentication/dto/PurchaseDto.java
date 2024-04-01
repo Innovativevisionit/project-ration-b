@@ -16,5 +16,5 @@ public class PurchaseDto {
     private BigDecimal kg;
     @NotNull(message = "Amount is required")
     private BigDecimal amount;
-
+    private String productName;
 }

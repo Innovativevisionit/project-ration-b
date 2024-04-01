@@ -10,6 +10,8 @@ import com.sql.authentication.payload.response.LoginResponse;
 import com.sql.authentication.repository.RoleRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,8 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 @CrossOrigin
 @RestController
@@ -53,7 +53,7 @@ public class AuthController {
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody SignInRequest loginRequest, HttpSession session) {
 
-        System.out.println(loginRequest);
+        System.out.println("data    "+loginRequest);
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
@@ -62,6 +62,14 @@ public class AuthController {
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         session.setAttribute("user",userDetails);
+        session.setAttribute("email", loginRequest.getEmail());
+
+        System.out.println("Email set in session: " + session.getAttribute("email"));
+        // if(loginRequest.getEmail() != null){
+        //     System.out.println("6"+loginRequest.getEmail());
+        //     session.setAttribute("email", loginRequest.getEmail());
+        // }
+
 
         ResponseCookie jwtCookie = jwtUtils.generateJwtCookie(userDetails);
 
@@ -129,5 +137,17 @@ public class AuthController {
         List<User> user = userRepository.findAll();
         return user;
     }
-    
+
+
+    @GetMapping("/logout")
+    public String clearSession(HttpServletRequest request) {
+        
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "logged off";
+        
+    }
+
 }

@@ -112,10 +112,12 @@ public class ProdAllocController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
-    @GetMapping("/locationProductList")
-    public List<ProductLocationList> locationProductList(HttpSession session){
-        return prodAllocService.locationProductList(session);
+
+    @GetMapping("/locationProductList/{email}")
+    public List<ProductLocationList> locationProductList(@PathVariable String email){
+        return prodAllocService.locationProductList(email);
     }
+
     @GetMapping("/requestListAdmin")
     public List<ProductRequestList> productRequestList(@RequestParam int status,HttpSession session){
         return prodAllocService.productRequestListAdmin("Admin",status,session);

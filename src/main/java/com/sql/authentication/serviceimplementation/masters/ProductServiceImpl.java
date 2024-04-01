@@ -35,8 +35,10 @@ public class ProductServiceImpl implements ProductService {
         Product product= productRepository.findById(data.getId())
                 .orElseThrow(()->new NotFoundException(data.getId() + "is not found"));
         product.setName(data.getName());
+        product.setDescription(data.getDescription());
         productRepository.save(product);
         return product;
+        
     }
 
 }
