@@ -6,4 +6,5 @@ import java.time.LocalDate;
 @Data
 public class TokenDto {
     private LocalDate localDate;
+    
 }
