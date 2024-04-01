@@ -4,6 +4,8 @@ import lombok.Data;
 
 @Data
 public class UserListRes {
+    
+    private Long id;
     private String username;
     private String email;
     private String locationName;

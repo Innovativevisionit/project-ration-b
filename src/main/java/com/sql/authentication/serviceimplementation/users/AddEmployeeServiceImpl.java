@@ -102,10 +102,12 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         updateUser.setLocation(location);
         updateUser.setUsername(userName);
         updateUser.setEmail(data.getEmail());
+        updateUser.setAge(data.getAge());
         if(data.getRole().equalsIgnoreCase("User")){
             updateUser.setSmartId(data.getSmartId());
-            updateUser.setAge(data.getAge());
             updateUser.setFamilyMembersCount(data.getFamilyMembersCount());
+        }else{
+            updateUser.setSalary(data.getSalary());
         }
         userRepository.save(updateUser);
         return updateUser;

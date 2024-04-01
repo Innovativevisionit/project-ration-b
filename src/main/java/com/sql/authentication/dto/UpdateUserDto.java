@@ -18,4 +18,5 @@ public class UpdateUserDto {
     private String smartId;
     private String age;
     private String familyMembersCount;
+    private String salary;
 }

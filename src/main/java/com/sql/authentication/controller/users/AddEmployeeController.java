@@ -112,8 +112,8 @@ public class AddEmployeeController {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> delete(@RequestParam int id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> delete(@PathVariable int id){
         try{
             User user=addEmployeeService.deleteUser(id);
             return ResponseEntity.ok(user);
