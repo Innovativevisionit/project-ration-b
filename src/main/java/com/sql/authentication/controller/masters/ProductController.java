@@ -6,6 +6,7 @@ import com.sql.authentication.model.Product;
 import com.sql.authentication.payload.response.ErrorResponse;
 import com.sql.authentication.payload.response.Response;
 import com.sql.authentication.service.masters.ProductService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,4 +90,5 @@ public class ProductController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
+
 }

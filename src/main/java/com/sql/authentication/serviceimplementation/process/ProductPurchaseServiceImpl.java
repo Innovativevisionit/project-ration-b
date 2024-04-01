@@ -2,10 +2,7 @@ package com.sql.authentication.serviceimplementation.process;
 
 import com.sql.authentication.dto.PurchaseDto;
 import com.sql.authentication.exception.NotFoundException;
-import com.sql.authentication.model.LocationProduct;
-import com.sql.authentication.model.Product;
-import com.sql.authentication.model.User;
-import com.sql.authentication.model.UserProdPurchase;
+import com.sql.authentication.model.*;
 import com.sql.authentication.payload.response.UserListRes;
 import com.sql.authentication.repository.LocationProductRepository;
 import com.sql.authentication.repository.ProductRepository;
@@ -13,6 +10,9 @@ import com.sql.authentication.repository.UserProdPurchaseRepository;
 import com.sql.authentication.repository.UserRepository;
 import com.sql.authentication.service.process.ProductPurchaseService;
 
+import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
+import com.sql.authentication.utils.AuthDetails;
+import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +34,8 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
     
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private AuthDetails authDetails;
 
     public PurchaseDto store(PurchaseDto dto){
         UserProdPurchase userProdPurchase=new UserProdPurchase();
@@ -72,5 +74,12 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
                .map(list->{
                     return modelMapper.map(list, PurchaseDto.class);
                 }).toList();
+    }
+    public List<PurchaseDto> employeeUserPurchaseList(HttpSession session){
+        UserDetailsImpl userDetails=authDetails.getUserDetails(session);
+        Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
+        List<UserProdPurchase> userProdPurchases=userProdPurchaseRepository.findByUser_location(user.get().getLocation());
+        return userProdPurchases.stream().map(data->modelMapper.map(data,PurchaseDto.class)).toList();
+
     }
 }
