@@ -3,6 +3,7 @@ package com.sql.authentication.controller.process;
 import com.sql.authentication.dto.PurchaseDto;
 import com.sql.authentication.model.UserProdPurchase;
 import com.sql.authentication.service.process.ProductPurchaseService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -35,6 +36,11 @@ public class ProdPurchaseController {
     @GetMapping("/purchaseList/{email}")
     public List<PurchaseDto>  prodUserPurchasedList(@PathVariable String email){
         return productPurchaseService.purchaseList(email);
+    }
+
+    @GetMapping("/empProductList")
+    public List<PurchaseDto> empProductList(HttpSession session){
+        return productPurchaseService.employeeUserPurchaseList(session);
     }
 }
 
