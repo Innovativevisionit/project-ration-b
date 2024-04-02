@@ -118,6 +118,11 @@ public class ProdAllocController {
         return prodAllocService.locationProductList(email);
     }
 
+    @GetMapping("/locationProduct")
+    public List<ProductLocationList> locationProduct(){
+        return prodAllocService.locationProduct();
+    }
+
     @GetMapping("/requestListAdmin")
     public List<ProductRequestList> productRequestList(@RequestParam int status,HttpSession session){
         return prodAllocService.productRequestListAdmin("Admin",status,session);

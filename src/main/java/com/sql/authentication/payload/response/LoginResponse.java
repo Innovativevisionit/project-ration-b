@@ -13,6 +13,6 @@ public class LoginResponse {
     private Long id;
     private String username;
     private String email;
-    private String roles;
+    private String role;
     private String accessToken;
 }

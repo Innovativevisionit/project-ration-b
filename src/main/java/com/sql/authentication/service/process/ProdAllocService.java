@@ -18,6 +18,7 @@ public interface ProdAllocService {
     LocationProduct delete(IdDto prodAllocDto);
     ProductRequest productRequest(ProductRequestDto requestDto, HttpSession session);
     List<ProductLocationList> locationProductList(String email);
+    List<ProductLocationList> locationProduct();
     ProductRequest productRequestAccept(int id);
     List<ProductRequestList> productRequestListAdmin(String role, int status,HttpSession session);
 }
