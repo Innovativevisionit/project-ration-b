@@ -38,9 +38,9 @@ public class ProdPurchaseController {
         return productPurchaseService.purchaseList(email);
     }
 
-    @GetMapping("/empProductList")
-    public List<PurchaseDto> empProductList(HttpSession session){
-        return productPurchaseService.employeeUserPurchaseList(session);
+    @GetMapping("/empProductList/{email}")
+    public List<PurchaseDto> empProductList(@PathVariable String email){
+        return productPurchaseService.employeeUserPurchaseList(email);
     }
 }
 

@@ -17,4 +17,5 @@ public class PurchaseDto {
     @NotNull(message = "Amount is required")
     private BigDecimal amount;
     private String productName;
+    private String userSmartId;
 }

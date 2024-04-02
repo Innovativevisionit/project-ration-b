@@ -1,5 +1,7 @@
 package com.sql.authentication.model;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,13 +12,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Token {
-
+public class Delivery {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -28,5 +29,4 @@ public class Token {
     @ManyToOne
     @JoinColumn(name = "location_id")
     private Location location;
-
 }

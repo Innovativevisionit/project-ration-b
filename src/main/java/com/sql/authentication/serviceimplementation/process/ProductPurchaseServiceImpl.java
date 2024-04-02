@@ -75,9 +75,9 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
                     return modelMapper.map(list, PurchaseDto.class);
                 }).toList();
     }
-    public List<PurchaseDto> employeeUserPurchaseList(HttpSession session){
-        UserDetailsImpl userDetails=authDetails.getUserDetails(session);
-        Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
+
+    public List<PurchaseDto> employeeUserPurchaseList(String email){
+        Optional<User> user=userRepository.findByEmail(email);
         List<UserProdPurchase> userProdPurchases=userProdPurchaseRepository.findByUser_location(user.get().getLocation());
         return userProdPurchases.stream().map(data->modelMapper.map(data,PurchaseDto.class)).toList();
 

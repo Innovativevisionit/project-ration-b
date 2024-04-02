@@ -10,5 +10,5 @@ public interface ProductPurchaseService {
     PurchaseDto store(PurchaseDto dto);
     List<PurchaseDto> list(String email);
     List<PurchaseDto> purchaseList(String email);
-    List<PurchaseDto> employeeUserPurchaseList(HttpSession session);
+    List<PurchaseDto> employeeUserPurchaseList(String email);
 }
