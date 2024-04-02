@@ -49,6 +49,7 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
         LocalDate date=LocalDate.now();
         userProdPurchase.setPurchasedDate(date);
         YearMonth yearMonth=YearMonth.of(date.getYear(), date.getMonthValue());
+//        System.out.println(userProdPurchase);
         userProdPurchaseRepository.save(userProdPurchase);
         return dto;
     }
@@ -79,7 +80,11 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
         UserDetailsImpl userDetails=authDetails.getUserDetails(session);
         Optional<User> user=userRepository.findByEmail(userDetails.getEmail());
         List<UserProdPurchase> userProdPurchases=userProdPurchaseRepository.findByUser_location(user.get().getLocation());
-        return userProdPurchases.stream().map(data->modelMapper.map(data,PurchaseDto.class)).toList();
+        return userProdPurchases.stream().map(data->{
+            PurchaseDto dto=modelMapper.map(data,PurchaseDto.class);
+            dto.setSmartId(data.getUser().getSmartId());
+            return dto;
+        }).toList();
 
     }
 }
