@@ -16,7 +16,9 @@ import jakarta.servlet.http.HttpSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.squareup.okhttp.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
@@ -37,7 +39,7 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
     @Autowired
     private AuthDetails authDetails;
 
-    public PurchaseDto store(PurchaseDto dto){
+    public PurchaseDto store(PurchaseDto dto) throws IOException {
         UserProdPurchase userProdPurchase=new UserProdPurchase();
         User user= userRepository.findBySmartId(dto.getSmartId()).orElseThrow(()->new NotFoundException(dto.getSmartId()+ "is not found"));
         Product product=productRepository.findByName(dto.getProduct()).orElseThrow(()->new NotFoundException(dto.getProduct()+"is not found"));
@@ -49,7 +51,41 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
         LocalDate date=LocalDate.now();
         userProdPurchase.setPurchasedDate(date);
         YearMonth yearMonth=YearMonth.of(date.getYear(), date.getMonthValue());
+        userProdPurchase.setMonth(yearMonth);
+        locationProduct.setStockKg(locationProduct.getStockKg().subtract(dto.getKg()));
+        locationProduct.setDeliveredKg(locationProduct.getStockKg().add(dto.getKg()));
         userProdPurchaseRepository.save(userProdPurchase);
+        if(user.getContactNo()!=null) {
+            OkHttpClient client = new OkHttpClient();
+            MediaType mediaType = MediaType.parse("application/json");
+            String data="Dear User,"+product+" was bought successfully ";
+            String jsonBody = "{\n" +
+                    "  \"messages\": [\n" +
+                    "    {\n" +
+                    "      \"body\": \""+data+"\",\n" +
+                    "      \"to\": \"" + user.getContactNo() + "\",\n" + // Insert the contactNo dynamically
+                    "      \"from\": \"8248108074\"\n" +
+                    "    }\n" +
+                    "  ]\n" +
+                    "}";
+            com.squareup.okhttp.RequestBody body = RequestBody.create(mediaType,jsonBody);
+            Request request = new Request.Builder()
+                    .url("https://rest.clicksend.com/v3/sms/send")
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Authorization", "Basic YXl5YW5hci5hckBoZXBsLmNvbToyMkQ2RENEMS00QzE5LTAyMzItRDg1Qy1GOTBGNzE0QTJDNTM=")
+                    .build();
+            Response response = client.newCall(request).execute();
+            try {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Unexpected response code: " + response);
+                }
+            } catch (IOException e) {
+                throw new IOException(e.getMessage());
+            } finally {
+                response.body().close();
+            }
+        }
         return dto;
     }
 
@@ -79,7 +115,11 @@ public class ProductPurchaseServiceImpl implements ProductPurchaseService {
     public List<PurchaseDto> employeeUserPurchaseList(String email){
         Optional<User> user=userRepository.findByEmail(email);
         List<UserProdPurchase> userProdPurchases=userProdPurchaseRepository.findByUser_location(user.get().getLocation());
-        return userProdPurchases.stream().map(data->modelMapper.map(data,PurchaseDto.class)).toList();
+        return userProdPurchases.stream().map(data->{
+            PurchaseDto dto=modelMapper.map(data,PurchaseDto.class);
+            dto.setSmartId(data.getUser().getSmartId());
+            return dto;
+        }).toList();
 
     }
 }

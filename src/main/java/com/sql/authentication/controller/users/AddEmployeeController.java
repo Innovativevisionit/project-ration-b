@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -129,5 +130,14 @@ public class AddEmployeeController {
     @GetMapping("/smartCardList/{email}")
     public List<String> getSmartIdList(@PathVariable String email){
         return addEmployeeService.smartCardList(email);
+    }
+    @PostMapping("/updateProfile")
+    public ResponseEntity<?> updateProfile(@RequestParam("file") MultipartFile file,HttpSession session) {
+        try {
+            String  user = addEmployeeService.updateProfile(file,session);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }

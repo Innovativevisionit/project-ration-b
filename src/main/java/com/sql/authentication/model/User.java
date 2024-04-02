@@ -46,6 +46,8 @@ public class User {
     private String age;
     private String familyMembersCount;
     private String salary;
+    private Long contactNo;
+    private String profileImage;
     
     public User(String username, String email, String password) {
         this.username = username;
