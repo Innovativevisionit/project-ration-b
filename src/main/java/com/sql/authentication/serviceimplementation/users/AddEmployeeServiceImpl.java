@@ -2,8 +2,10 @@ package com.sql.authentication.serviceimplementation.users;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import com.sql.authentication.utils.FileUpload;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
@@ -27,6 +29,7 @@ import com.sql.authentication.serviceimplementation.auth.UserDetailsImpl;
 import com.sql.authentication.utils.AuthDetails;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class AddEmployeeServiceImpl implements AddEmployeeService {
@@ -40,6 +43,8 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
     private LocationRepository locationRepository;
     @Autowired
     private AuditorAware<String> auditorAware;
+    @Autowired
+    private FileUpload fileUpload;
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
@@ -125,7 +130,22 @@ public class AddEmployeeServiceImpl implements AddEmployeeService {
         userRepository.deleteById(id);
         return updateUser;
     }
+    //update Profile Image
+    public String updateProfile(MultipartFile file,HttpSession session) {
+        UserDetailsImpl userDetails=authDetails.getUserDetails(session);
+        Optional<User> updateUser = userRepository.findByEmail(userDetails.getEmail());
+        if(updateUser.isPresent()){
+            User user=updateUser.get();
+            if (!file.isEmpty()) {
+                String fileName = fileUpload.uniqueFileName("profile", file);
+                user.setProfileImage(fileName);
+                userRepository.save(user);
+                return "Success";
+            }
+        }
+        return "Not Found";
 
+    }
 
     @Override
     public List<EmpListRes> employeeList(){

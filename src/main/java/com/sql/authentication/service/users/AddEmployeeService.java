@@ -7,6 +7,7 @@ import com.sql.authentication.payload.response.EmpListRes;
 import com.sql.authentication.payload.response.UserListRes;
 
 import jakarta.servlet.http.HttpSession;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,5 +19,6 @@ public interface AddEmployeeService {
     User deleteUser(int id);
     List<UserListRes> empUserList(String email);
     List<String> smartCardList(String email);
+    String updateProfile(MultipartFile file, HttpSession session);
 
 }

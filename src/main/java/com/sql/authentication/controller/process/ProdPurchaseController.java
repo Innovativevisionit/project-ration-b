@@ -6,6 +6,7 @@ import com.sql.authentication.service.process.ProductPurchaseService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,11 @@ public class ProdPurchaseController {
 
     @PostMapping("/store")
     public PurchaseDto prodPurchase(@Valid @RequestBody PurchaseDto dto){
-        return productPurchaseService.store(dto);
+        try {
+            return productPurchaseService.store(dto);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
     
     @GetMapping("/list/{email}")
